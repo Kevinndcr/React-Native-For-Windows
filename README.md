@@ -1,97 +1,106 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+﻿# MiApp — React Native for Windows + SQLite
 
-# Getting Started
+App de escritorio para Windows que muestra datos de una base de datos SQLite y permite importar un archivo `.db` desde el explorador de archivos.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+---
 
-## Step 1: Start Metro
+## Requisitos previos
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+| Herramienta | Versión mínima |
+|-------------|---------------|
+| Windows 10/11 | build 19041+ |
+| Node.js | 18 LTS o superior |
+| Yarn | cualquier versión reciente |
+| Git | cualquier versión reciente |
+| Visual Studio 2022 o 2026 | Community (gratis) |
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+### Workloads requeridos en Visual Studio
 
-```sh
-# Using npm
-npm start
+Abrir el **Visual Studio Installer** → Modify y marcar:
 
-# OR using Yarn
-yarn start
+- ✅ **Desktop development with C++**
+- ✅ **WinUI application development**
+
+### Verificar dependencias RNW (una sola vez, como Administrador)
+
+```powershell
+Set-ExecutionPolicy Unrestricted -Scope Process -Force
+iex (New-Object System.Net.WebClient).DownloadString('https://aka.ms/rnw-vs2022-deps.ps1')
 ```
 
-## Step 2: Build and run your app
+---
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+## Instalación
 
-### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
+```bash
+git clone <URL-del-repo>
+cd MiApp
+yarn install
 ```
 
-### iOS
+---
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+## Ejecutar en modo desarrollo
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
+```powershell
+$env:VisualStudioVersion = "18.0"
+npx react-native run-windows --msbuildprops PlatformToolset=v145
 ```
 
-Then, and every time you update your native dependencies, run:
+> La primera compilación tarda 10-20 minutos. Las siguientes son mucho más rápidas.
 
-```sh
-bundle exec pod install
+> Si tenés **Visual Studio 2022** (no 2026), usá este comando en su lugar:
+> ```bash
+> npx react-native run-windows
+> ```
+
+---
+
+## Uso de la app
+
+1. Al abrir la app verás el mensaje "No hay base de datos" si es la primera vez
+2. Hacé clic en **"Importar base de datos..."**
+3. Seleccioná un archivo `.db`, `.sqlite` o `.sqlite3` desde el explorador de archivos
+4. La tabla se recarga automáticamente con los datos del archivo importado
+
+La base de datos se guarda internamente en:
+```
+C:\Users\<usuario>\AppData\Roaming\MiApp\greetings.db
 ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+---
 
-```sh
-# Using npm
-npm run ios
+## Estructura del proyecto
 
-# OR using Yarn
-yarn ios
+```
+MiApp/
+├── windows/MiApp/
+│   ├── SQLiteModule.h      ← Native Module C++: lee la BD
+│   ├── FilePickerModule.h  ← Native Module C++: abre el file picker
+│   ├── sqlite3.h / .c      ← SQLite amalgamation 3.52.0
+│   └── MiApp.vcxproj
+├── src/
+│   ├── services/db.js      ← puente JS ↔ Native Modules
+│   ├── hooks/useGreetings.js
+│   ├── components/
+│   │   ├── ImportButton.jsx
+│   │   └── GreetingsTable.jsx
+│   └── pages/HomePage.jsx
+└── App.tsx
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+---
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+## Generar instalador MSIX (distribución)
 
-## Step 3: Modify your app
+En Visual Studio:
+```
+Menú → Proyecto → Publicar → Crear paquetes de aplicación...
+→ Sideloading → Release / x64 → Generar
+```
 
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+Instalar en la PC del usuario final:
+```powershell
+# PowerShell como Administrador
+Add-AppxPackage -Path "MiApp_1.0.0.0_x64.msix"
+```
