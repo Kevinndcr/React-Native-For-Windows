@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { getGreetings, dbExists, pickAndImport } from '../services/db';
+import { getGreetings, dbExists, pickAndImport, insertGreeting, updateGreeting, deleteGreeting } from '../services/db';
 
 export function useGreetings() {
   const [greetings, setGreetings] = useState([]);
   const [loading,   setLoading]   = useState(true);
   const [error,     setError]     = useState(null);
 
-  const load = async () => {
+  const load = () => {
     setLoading(true);
     setError(null);
     try {
@@ -32,5 +32,20 @@ export function useGreetings() {
     if (imported) load();
   };
 
-  return { greetings, loading, error, importDatabase };
+  const addGreeting = (name, message, fecha) => {
+    insertGreeting(name, message, fecha);
+    load();
+  };
+
+  const editGreeting = (id, name, message, fecha) => {
+    updateGreeting(id, name, message, fecha);
+    load();
+  };
+
+  const removeGreeting = (id) => {
+    deleteGreeting(id);
+    load();
+  };
+
+  return { greetings, loading, error, importDatabase, addGreeting, editGreeting, removeGreeting };
 }

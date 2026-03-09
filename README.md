@@ -45,6 +45,7 @@ yarn install
 ```powershell
 $env:VisualStudioVersion = "18.0"
 npx react-native run-windows --msbuildprops PlatformToolset=v145
+
 ```
 
 > La primera compilación tarda 10-20 minutos. Las siguientes son mucho más rápidas.
@@ -91,16 +92,56 @@ MiApp/
 
 ---
 
-## Generar instalador MSIX (distribución)
+## Generar el instalador `.exe`
 
-En Visual Studio:
-```
-Menú → Proyecto → Publicar → Crear paquetes de aplicación...
-→ Sideloading → Release / x64 → Generar
-```
+El proyecto incluye scripts en `installer/` para producir un instalador estilo wizard (`dist/MiApp-Setup.exe`) que el usuario final solo tiene que ejecutar con doble clic — sin pasos manuales de certificado ni comandos de PowerShell.
 
-Instalar en la PC del usuario final:
+### Requisito: Inno Setup 6
+
+Solo se instala una vez en la máquina de desarrollo:
+
 ```powershell
-# PowerShell como Administrador
-Add-AppxPackage -Path "MiApp_1.0.0.0_x64.msix"
+winget install --id JRSoftware.InnoSetup --silent --accept-package-agreements --accept-source-agreements
 ```
+
+### Proceso completo (dos pasos)
+
+**Paso 1 — Compilar el MSIX en modo Release:**
+
+```powershell
+cd MiApp
+$env:VisualStudioVersion = "18.0"
+npx react-native run-windows --msbuildprops PlatformToolset=v145 --release --no-launch
+```
+
+**Paso 2 — Compilar el instalador `.exe`:**
+
+```powershell
+cd installer
+.\build.ps1
+```
+
+Salida: `dist\MiApp-Setup.exe` (~38 MB, listo para distribuir).
+
+---
+
+## Instalar en la PC del usuario final
+
+> El usuario solo necesita Windows 10/11. No necesita Node.js, Visual Studio ni ninguna herramienta de desarrollo.
+
+1. Descargar `MiApp-Setup.exe`
+2. Doble clic → clic en **Siguiente** → clic en **Instalar**
+3. La app aparece en el menú de Inicio ✅
+
+El instalador se encarga automáticamente de:
+- Instalar el certificado de firma en el almacén de confianza
+- Instalar las dependencias del sistema (VCLibs, Windows App Runtime)
+- Instalar el MSIX de la app
+
+### Actualizaciones futuras
+
+Generar un nuevo `MiApp-Setup.exe` y enviárselo al usuario. Basta con ejecutarlo — el instalador detecta que la app ya existe y la actualiza.
+
+### Desinstalar
+
+Menú Inicio → **Configuración** → **Aplicaciones** → buscar "MiApp" → **Desinstalar**.
