@@ -7,9 +7,9 @@ App de escritorio Windows con base de datos SQLite. Permite agregar, editar, eli
 - Windows 10/11
 - [Node.js 18+](https://nodejs.org/en/download)
 - [Git](https://git-scm.com/downloads)
-- [Visual Studio 2022 o 2026 Community](https://visualstudio.microsoft.com/vs/community/) con los workloads:
-  - **Desktop development with C++**
-  - **Universal Windows Platform development**
+- [Visual Studio 2022 o 2026 Community](https://visualstudio.microsoft.com/vs/community/) — al instalar (o desde el **Visual Studio Installer → Modify**), marcar:
+  - ✅ **Desktop development with C++**
+  - ✅ **Universal Windows Platform development**
 
 ## Instalación
 
