@@ -1,4 +1,4 @@
-﻿# Guía de instalación desde cero (git clone)
+# Guía de instalación desde cero (git clone)
 
 > Esta guía documenta el proceso completo y los problemas reales encontrados al configurar el entorno por primera vez.
 
