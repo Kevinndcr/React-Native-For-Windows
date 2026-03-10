@@ -25,7 +25,11 @@ if (-not $iscc -or -not (Test-Path $iscc)) {
 }
 
 # Verificar que el Release MSIX existe
-$msixPath = "..\windows\MiApp.Package\AppPackages\MiApp.Package_1.0.0.0_x64_Test\MiApp.Package_1.0.0.0_x64.msix"
+$msixPath = ".\..\windows\MiApp.Package\AppPackages\MiApp.Package_1.0.0.0_x64_Test\MiApp.Package_1.0.0.0_x64.msix"
+$pfxPath  = ".\..\windows\MiApp.Package\MiApp.Package_Sign.pfx"
+$signtool = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin" -Recurse -Filter "signtool.exe" -ErrorAction SilentlyContinue |
+    Where-Object { $_.FullName -like "*x64*" } | Select-Object -First 1 -ExpandProperty FullName
+
 if (-not (Test-Path $msixPath)) {
     Write-Host ""
     Write-Host "ERROR: MSIX Release no encontrado." -ForegroundColor Red
@@ -33,6 +37,15 @@ if (-not (Test-Path $msixPath)) {
     Write-Host '  $env:VisualStudioVersion = "18.0"' -ForegroundColor Cyan
     Write-Host "  npx react-native run-windows --msbuildprops PlatformToolset=v145 --release --no-launch" -ForegroundColor Cyan
     exit 1
+}
+
+# Firmar el MSIX si signtool está disponible y hay PFX
+if ($signtool -and (Test-Path $pfxPath)) {
+    Write-Host "Firmando MSIX..." -ForegroundColor Cyan
+    & $signtool sign /fd SHA256 /f (Resolve-Path $pfxPath) /p "miapp2026" (Resolve-Path $msixPath) | Out-Null
+    Write-Host "MSIX firmado OK" -ForegroundColor Green
+} else {
+    Write-Host "ADVERTENCIA: signtool o PFX no encontrado, el MSIX no sera firmado." -ForegroundColor Yellow
 }
 
 # Crear dist/ si no existe

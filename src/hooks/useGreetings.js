@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getGreetings, dbExists, pickAndImport, insertGreeting, updateGreeting, deleteGreeting } from '../services/db';
+import { getGreetings, dbExists, pickAndImport, insertGreeting, updateGreeting, deleteGreeting, exportDb } from '../services/db';
 
 export function useGreetings() {
   const [greetings, setGreetings] = useState([]);
@@ -47,5 +47,7 @@ export function useGreetings() {
     load();
   };
 
-  return { greetings, loading, error, importDatabase, addGreeting, editGreeting, removeGreeting };
+  const exportDatabase = async () => { await exportDb(); };
+
+  return { greetings, loading, error, importDatabase, exportDatabase, addGreeting, editGreeting, removeGreeting };
 }

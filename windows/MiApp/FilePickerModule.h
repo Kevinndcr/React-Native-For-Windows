@@ -53,6 +53,47 @@ struct FilePickerModule {
             promise.Resolve(result);
         }).detach();
     }
+
+    REACT_METHOD(ExportDb, L"exportDb")
+    void ExportDb(
+        winrt::Microsoft::ReactNative::ReactPromise<bool> promise) noexcept {
+
+        auto roamingPath = winrt::Windows::Storage::ApplicationData::Current()
+                               .RoamingFolder().Path();
+        std::wstring srcPath(roamingPath.c_str());
+        srcPath += L"\\greetings.db";
+
+        std::thread([promise = std::move(promise),
+                     srcPath = std::move(srcPath)]() mutable noexcept {
+            CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
+
+            WCHAR szFile[MAX_PATH] = L"greetings.db";
+            OPENFILENAMEW ofn = {};
+            ofn.lStructSize  = sizeof(ofn);
+            ofn.hwndOwner    = GetForegroundWindow();
+            ofn.lpstrFile    = szFile;
+            ofn.nMaxFile     = MAX_PATH;
+            ofn.lpstrFilter  = L"SQLite Database\0*.db\0All Files\0*.*\0";
+            ofn.nFilterIndex = 1;
+            ofn.lpstrDefExt  = L"db";
+            ofn.Flags = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST;
+
+            bool result = false;
+            if (GetSaveFileNameW(&ofn)) {
+                try {
+                    std::filesystem::copy_file(
+                        std::filesystem::path(srcPath),
+                        std::filesystem::path(szFile),
+                        std::filesystem::copy_options::overwrite_existing);
+                    result = true;
+                } catch (...) {
+                }
+            }
+
+            CoUninitialize();
+            promise.Resolve(result);
+        }).detach();
+    }
 };
 
 } // namespace MiApp

@@ -15,6 +15,13 @@
   <PropertyGroup>
     <WapProjPath Condition="'$(WapProjPath)'==''">$(MSBuildExtensionsPath)\Microsoft\DesktopBridge\</WapProjPath>
   </PropertyGroup>
+  <PropertyGroup>
+    <PackageCertificateKeyFile>MiApp.Package_Sign.pfx</PackageCertificateKeyFile>
+    <PackageCertificatePassword>miapp2026</PackageCertificatePassword>
+    <PackageCertificateThumbprint>FB649B27772177F03F4C837F7ED60D80080E03F1</PackageCertificateThumbprint>
+    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+  </PropertyGroup>
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.props" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x86">

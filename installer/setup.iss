@@ -63,6 +63,9 @@ Source: "{#DepDir}\Microsoft.WindowsAppRuntime.1.7.msix"; \
 ; Script de instalación
 Source: "install-helper.ps1"; DestDir: "{tmp}"; Flags: deleteafterinstall
 
+; Certificado de firma (necesario para que Windows confíe en el MSIX)
+Source: "..\windows\MiApp.Package\MiApp.Package_Sign.cer"; DestDir: "{tmp}"; Flags: deleteafterinstall
+
 [Run]
 Filename: "powershell.exe"; \
     Parameters: "-ExecutionPolicy Bypass -NonInteractive -WindowStyle Hidden -File ""{tmp}\install-helper.ps1"" -TmpDir ""{tmp}"""; \

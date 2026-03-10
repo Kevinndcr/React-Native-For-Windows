@@ -11,3 +11,4 @@ export const pickAndImport = () => FilePickerModule.pickAndImportDb();
 export const insertGreeting = (name, message, fecha) => SQLiteModule.insert(name, message, fecha);
 export const updateGreeting = (id, name, message, fecha) => SQLiteModule.update(id, name, message, fecha);
 export const deleteGreeting = (id) => SQLiteModule.deleteRow(id);
+export const exportDb       = () => FilePickerModule.exportDb();

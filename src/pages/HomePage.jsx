@@ -21,7 +21,7 @@ const C = {
 export { C };
 
 export function HomePage() {
-  const { greetings, loading, error, importDatabase, addGreeting, editGreeting, removeGreeting } = useGreetings();
+  const { greetings, loading, error, importDatabase, exportDatabase, addGreeting, editGreeting, removeGreeting } = useGreetings();
   const [formMode, setFormMode] = useState(null);
 
   const handleSave = ({ name, message, fecha }) => {
@@ -57,6 +57,11 @@ export function HomePage() {
             label="↑  Importar BD"
             onImport={importDatabase}
             color={C.accentHov}
+          />
+          <ImportButton
+            label="↓  Exportar BD"
+            onImport={exportDatabase}
+            color="#0f766e"
           />
           <ImportButton
             label="+  Nuevo registro"
