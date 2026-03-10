@@ -89,9 +89,9 @@ La base de datos activa está en:
 %APPDATA%\MiApp\greetings.db
 ```
 
-**Exportar:** botón "Exportar base de datos..." dentro de la app → elige dónde guardar el `.db`.
+**Exportar:** botón "Exportar base de datos..." dentro de la app → elige dónde guardar el `.db` (por ejemplo, `greetings.db`).
 
-**Importar:** botón "Importar base de datos..." → selecciona un `.db` → la tabla se recarga automáticamente.
+**Importar:** botón "Importar base de datos..." → selecciona un `.db` (por ejemplo, `greetings.db`) → la tabla se recarga automáticamente.
 
 > Al importar se reemplaza la base de datos actual. Los datos anteriores se pierden.
 
